@@ -1,1 +1,1 @@
-# MCITCommuityHub
+# MCITCommunityHub
