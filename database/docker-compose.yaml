@@ -12,7 +12,26 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - "pg-data:/var/lib/postgresql/data"
+      - "C:/Users/gargk/Workspace/MCITCommunityHub/database/pg-data:/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  dbtest:
+    container_name: postgres_container_test
+    image: postgres:15.3-alpine3.18
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DATABASE} 
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5000:5432"
+    volumes:
+      - "C:/Users/gargk/Workspace/MCITCommunityHub/database/pg-data-test:/var/lib/postgresql/data"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME}"]
       interval: 10s
@@ -34,4 +53,6 @@ services:
 
 volumes:
   pg-data:
+  pg-data-test:
   pgadmin-data:
+  

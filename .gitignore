@@ -1,6 +1,6 @@
 # Database folder
-postgres-data
-
+database
+! *.yaml
 # Logs
 logs
 *.log
