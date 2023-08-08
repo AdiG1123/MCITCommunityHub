@@ -10,8 +10,8 @@ app.use(cors());
 app.use(express.json());
 app.use('/', routes);
 
-const PORT = 3000;
+const PORT = 8888;
 
-app.listen(3000, () => {
-    console.log("server has started on port 3000");
+app.listen(PORT, () => {
+    console.log(`server has started on port ${PORT}`);
   });

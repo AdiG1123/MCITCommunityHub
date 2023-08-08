@@ -7,5 +7,4 @@ router.use('/courses', courses);
 
 router.use('/users', users);
 
-
 module.exports = router;
