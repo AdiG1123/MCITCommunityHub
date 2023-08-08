@@ -2,6 +2,7 @@
 database
 ! *.yaml
 .env.secret
+./__pycache__
 # Logs
 logs
 *.log
