@@ -1,8 +1,11 @@
 from lxml import html
 import requests
 import re
-
+from dotenv import dotenv_values
 import pprint
+import psycopg2
+
+import db_writer as db
 
 def prereq_identifier(prereq_text:str) -> list:
     '''
@@ -11,7 +14,7 @@ def prereq_identifier(prereq_text:str) -> list:
     than one coreq before the word corequisite is found'
     '''
     pattern = re.compile(r"((?:CIS|CIT|ESE) \d{4})")
-    print(prereq_text)
+    # print(prereq_text)
     coreq_check = re.finditer(r"corequisite|co-requisite", prereq_text, re.I)
     initial_find = None
     for match in coreq_check:
@@ -47,7 +50,7 @@ desc_prereq_1 = dom_tree.xpath('//*[@id="coursesblock_031ec56dfd56ae09e03931cfeb
 desc_prereq_2 = dom_tree.xpath('//*[@id="coursesblock_cab20eb916748b85e00f9cb956c2b79d"]/div/div/div//text()')
 desc_prereq = desc_prereq_1 + desc_prereq_2
 
-#print(desc_prereq)
+print(desc_prereq)
 
 
 updated_desc_prereq = [ele.strip() for ele in desc_prereq]
@@ -78,11 +81,34 @@ for c_info in grouped:
             start_index = 2
             if info == 'Pre-Requisites':
                 prereq_start_index = i
-                course_info_complete[c_info[0]]['course_desc'] = ", ".join(c_info[start_index:i])
+                course_info_complete[c_info[0]]['course_desc'] = " ".join(c_info[start_index:i])
             if info == 'Course Units':
-                course_info_complete[c_info[0]]['course_prereq'] = prereq_identifier(", ".join(c_info[prereq_start_index + 1: i]))
+                course_info_complete[c_info[0]]['course_prereq'] = prereq_identifier(" ".join(c_info[prereq_start_index + 1: i]))
 
 pprint.pprint(course_info_complete)
+
+if __name__ == "__main__":
+    try:
+        secrets = dotenv_values("C:/Users/gargk/Workspace/MCITCommunityHub/scripts/.env.secret")
+        conn = db.pg_db_connect(secrets=secrets)
+        conn.autocommit =  True
+        cursor = conn.cursor()
+        
+        course_table_values = []
+        for k, v in course_info_complete.items():
+            course_table_values.append((v['course_number'], v['course_name'], f"{v['course_name']}-syllabus.com", v['course_desc'], f"{v['course_name']}-textbooks", f"{v['course_name']}-Review"))
+
+        print(course_table_values)
+        db.write_to_course_table(cursor=cursor, values=course_table_values)    
+
+        cursor.close()
+    except (Exception, psycopg2.DatabaseError) as err:
+        print(err)
+    finally:
+        if conn is not None:
+            conn.close()
+            print("DB connection terminated.")
+
 
 
 
