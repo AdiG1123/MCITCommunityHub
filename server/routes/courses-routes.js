@@ -30,6 +30,8 @@ router.get('/', async (req, res) => {
       res.status(500).json({ error: error.message }); // Respond with a 500 status code if an error occurs
     }
   });
+
+  
 router.get('/coursestats', async (req, res) => {
 
   try {
@@ -37,7 +39,7 @@ router.get('/coursestats', async (req, res) => {
     if (courseInfo) {
       res.json(courseInfo); // Respond with course data if found
     } else {
-      res.status(404).json({ message: 'Course/stats not found' }); // Respond with a 404 status code if course not found
+      res.status(404).json({ message: 'Course stats not found' }); // Respond with a 404 status code if course not found
     }
   } catch (error) {
     res.status(500).json({ error: error.message }); // Respond with a 500 status code if an error occurs
