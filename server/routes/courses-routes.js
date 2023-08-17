@@ -1,26 +1,15 @@
 var express = require('express');
 var courses = require('../controllers/courses-cntrl');
+
 var router = express.Router();
 
+// router.use(verifyToken);
+
 router.get('/', async (req, res) => {
-  
+   
     try {
       const courseInfo = await courses.allCourses();
       if (courseInfo) {
-        
-        // for (var i in courseInfo){
-        //   var obj = {
-        //     "courseID" : courseInfo[i].courseID,
-        //     "coursenumber": courseInfo[i].coursenumber,
-        //     "coursename": courseInfo[i].coursename,
-        //     "syllabus": courseInfo[i].syllabus,
-        //     "description": courseInfo[i].description,
-        //     "textbooks": courseInfo[i].textbooks,
-        //     "summaryreview": courseInfo[i].summaryreview,
-        //     "prereqid": courseInfo[i].prereqid,
-
-        //   }
-        // }
 
         res.json(courseInfo); // Respond with course data if found
       } else {

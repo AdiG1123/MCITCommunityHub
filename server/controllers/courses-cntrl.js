@@ -2,15 +2,15 @@ const pool = require("./db");
 
 exports.allCourses = async function allCourses(){
     
-    const query = "SELECT courses.*, prereqs.\"prereqid\", prereqs.\"coreq\", sem.semester, prof.professor FROM \"Courses\" as courses \
-    FULL OUTER JOIN (SELECT \"courseID\", array_agg(\"prereqid\") as prereqid, array_agg(\"coReq\") as coreq FROM \"Prereqs\" GROUP BY \"courseID\") as prereqs \
-        ON courses.\"courseID\" = prereqs.\"courseID\" \
-    \
-    FULL OUTER JOIN (SELECT \"courseID\", array_agg(semester) as semester FROM \"SemesterOffered\" GROUP BY \"courseID\") as sem \
-        ON courses.\"courseID\" = sem.\"courseID\" \
-    \
-    FULL OUTER JOIN (SELECT \"courseID\", array_agg(professor) as professor FROM \"Professors\" GROUP BY \"courseID\") as prof \
-        ON courses.\"courseID\" = prof.\"courseID\""
+    const query = `SELECT courses.*, prereqs."prereqid", prereqs."coreq", sem.semester, prof.professor FROM "Courses" as courses 
+    FULL OUTER JOIN (SELECT "courseID", array_agg("prereqid") as prereqid, array_agg("coReq\") as coreq FROM "Prereqs" GROUP BY "courseID") as prereqs 
+        ON courses."courseID" = prereqs."courseID" 
+    
+    FULL OUTER JOIN (SELECT "courseID", array_agg(semester) as semester FROM "SemesterOffered" GROUP BY "courseID") as sem 
+        ON courses."courseID" = sem."courseID" 
+    
+    FULL OUTER JOIN (SELECT "courseID", array_agg(professor) as professor FROM "Professors" GROUP BY "courseID") as prof 
+        ON courses."courseID" = prof."courseID"`
     
     try {
         const result = await pool.query(query);
@@ -26,7 +26,7 @@ exports.allCourses = async function allCourses(){
 
 exports.prereqs = async function prereqs(courseid){
 
-    const query = "SELECT \"prereqid\", \"coReq\" FROM \"Prereqs\" WHERE \"courseID\" = $1";
+    const query = `SELECT "prereqid", "coReq" FROM "Prereqs" WHERE "courseID" = $1`
 
     try {
         const result = await pool.query(query, [courseid]);
@@ -38,11 +38,13 @@ exports.prereqs = async function prereqs(courseid){
 
 }
 
+
+// displays all course info with all 
 exports.courseStats = async function courseStats(){
 
-    const query = "SELECT \"courseID\", AVG(\"rating\") as averageRating, AVG(\"difficulty\") as averageDifficulty, AVG(\"weeklyHours\") as averageWorkload \
-                    FROM \"Reviews\" \
-                    GROUP BY \"courseID\";";
+    const query = `SELECT "courseID", AVG("rating") as averageRating, AVG("difficulty") as averageDifficulty, AVG("weeklyHours") as averageWorkload 
+                    FROM "Reviews" 
+                    GROUP BY "courseID";`;
 
     try {
         const result = await pool.query(query, [courseid]);
@@ -67,7 +69,7 @@ exports.allCourseStats = async function allCourseStats(){
     FULL OUTER JOIN (SELECT "courseID", array_agg(professor) as professor FROM "Professors" GROUP BY "courseID") as prof 
         ON courses."courseID" = prof."courseID" 
     
-    FULL OUTER JOIN (SELECT "courseID", AVG("rating") as "averageRating", AVG("difficulty") as "averageDifficulty", AVG("weeklyHours") as "averageWorkload" 
+    FULL OUTER JOIN (SELECT "courseID", ROUND(AVG("rating"), 2) as "averageRating", ROUND(AVG("difficulty"), 2) as "averageDifficulty", ROUND(AVG("weeklyHours"),2) as "averageWorkload" 
         FROM (SELECT DISTINCT rrc."courseID", r."rating", r."difficulty", r."weeklyHours" 
                 FROM "ReviewReplyContent" as rrc
 			  FULL OUTER JOIN (SELECT "reviewID","rating", "difficulty", "weeklyHours" FROM "Reviews") as r
