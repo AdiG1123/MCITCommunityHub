@@ -17,6 +17,12 @@ const verifyToken = async (req, res, next) => {
       audience: process.env.GOOGLE_CLIENT_ID, // Specify your Google Client ID here
     });
     const payload = ticket.getPayload();
+    
+    // manually verify domain is valid
+    const domain = payload['hd'];
+    if (domain != "seas.upenn.edu"){
+      return req.status(403).json({message: 'Invalid email domain'})
+    }
     req.user = payload;
     next();
   } catch (error) {
