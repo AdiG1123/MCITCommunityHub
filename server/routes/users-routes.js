@@ -3,9 +3,9 @@ var users = require('../controllers/users-cntrl');
 var router = express.Router();
 
 router.post('/', async (req, res) => {
-
+  const sub = req.user.sub;
   try {
-    const userInfo = await users.createUser(req.body);
+    const userInfo = await users.createUser(req.body, sub);
     // console.log(`info: ${userInfo}`)
     
     if (userInfo) {
