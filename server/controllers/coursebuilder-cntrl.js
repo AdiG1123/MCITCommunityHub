@@ -16,7 +16,7 @@ exports.courseBuilder = async function courseBuilder(userID){
 
     try {
         const result = await pool.query(query, [userID]);
-        const course = result.rows.length > 0 ? result.rows : null;
+        const course = result.rows.length > 0 ? result.rows[0] : null;
         return course;
     } catch (error){
         console.log("SQL error");

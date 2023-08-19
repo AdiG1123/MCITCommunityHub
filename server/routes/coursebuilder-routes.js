@@ -10,13 +10,13 @@ router.get('/:userid', async (req, res) => {
     try {
       const courseBuildInfo = await coursebuilder.courseBuilder(userid);
             
-      const splitGrad = coursebuilder.utilSplit(courseBuildInfo[0]["expectedGraduation"]);
-      courseBuildInfo[0]["graduationSemester"] = splitGrad[0];
-      courseBuildInfo[0]["graduationYear"] = splitGrad[1];
+      const splitGrad = coursebuilder.utilSplit(courseBuildInfo["expectedGraduation"]);
+      courseBuildInfo["graduationSemester"] = splitGrad[0];
+      courseBuildInfo["graduationYear"] = splitGrad[1];
       
       const splitStart = coursebuilder.utilSplit(courseBuildInfo[0]["startSemester"]);
-      courseBuildInfo[0]["startSemester"] = splitStart[0];
-      courseBuildInfo[0]["startYear"] = splitStart[1];        
+      courseBuildInfo["startSemester"] = splitStart[0];
+      courseBuildInfo["startYear"] = splitStart[1];        
       
       if (courseBuildInfo) {
         res.json(courseBuildInfo); // Respond with course builder data
