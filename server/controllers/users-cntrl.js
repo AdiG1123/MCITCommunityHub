@@ -1,12 +1,26 @@
 const pool = require("./db");
 
 // pulls information for a single user
-exports.singleUser = async function user(userid){
+exports.singleUserByUserID = async function user(userid){
   const query = `SELECT * FROM "User" 
   WHERE "User"."userID" = $1`;
 
   try {
       const result = await pool.query(query, [userid]);
+      const userInfo = result.rows.length > 0 ? result.rows : null;
+      return userInfo;
+  } catch (error){
+      throw error
+  }
+
+}
+
+exports.singleUserBySub = async function user(sub){
+  const query = `SELECT * FROM "User" 
+  WHERE "User"."sub" = $1`;
+
+  try {
+      const result = await pool.query(query, [sub]);
       const userInfo = result.rows.length > 0 ? result.rows : null;
       return userInfo;
   } catch (error){
@@ -40,3 +54,32 @@ exports.createUser = async function createUser(body, sub){
 }
 }
 
+// get a userID for a sub
+exports.getUserID = async function getUserID(sub){
+
+  const query = `SELECT "User"."userID" 
+  FROM "USER"
+  WHERE sub = sub`
+  try {
+    const result = await pool.query(query, 
+      [sub]);
+    const newUserID = result.rows.length > 0 ? result.rows : null;
+    return newUserID;
+} catch (error){
+    throw error
+}
+}
+
+exports.populateCourseBuilder = async function getUserID(userID){
+
+  const query = `INSERT INTO "CourseBuilder"
+  SELECT DISTINCT $1::int, "courseID", 0 FROM "Courses"
+  RETURNING 0;`
+  try {
+    const result = await pool.query(query, [userID]);
+    const newUserID = result.rows.length > 0 ? result.rows : null;
+    return newUserID.length;
+} catch (error){
+    throw error
+}
+}
