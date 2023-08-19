@@ -3,7 +3,7 @@ const pool = require("./db");
 exports.allCourses = async function allCourses(){
     
     const query = `SELECT courses.*, prereqs."prereqid", prereqs."coreq", sem.semester, prof.professor FROM "Courses" as courses 
-    FULL OUTER JOIN (SELECT "courseID", array_agg("prereqid") as prereqid, array_agg("coReq\") as coreq FROM "Prereqs" GROUP BY "courseID") as prereqs 
+    FULL OUTER JOIN (SELECT "courseID", array_agg("prereqid") as prereqid, array_agg("coReq") as coreq FROM "Prereqs" GROUP BY "courseID") as prereqs 
         ON courses."courseID" = prereqs."courseID" 
     
     FULL OUTER JOIN (SELECT "courseID", array_agg(semester) as semester FROM "SemesterOffered" GROUP BY "courseID") as sem 
@@ -92,11 +92,28 @@ exports.allCourseStats = async function allCourseStats(){
 }
 
 exports.singleCourse = async function singleCourse(coursenumber){
-    const query = "SELECT * FROM \"Courses\" WHERE \"coursenumber\" = $1";
+    const query = `SELECT courses.*, prereqs."prereqnumber", prereqs."coreq", sem.semester, prof.professor 
+    FROM "Courses" as courses 
+    
+    FULL OUTER JOIN (SELECT "courseID", array_agg(prereqnumber) as prereqnumber, array_agg("coReq") as coreq 
+    FROM (SELECT "Prereqs"."courseID", "Courses".coursenumber as prereqnumber, "Prereqs"."coReq"
+    FROM "Prereqs"
+    INNER JOIN "Courses"
+    ON "Courses"."courseID" = "Prereqs"."prereqid") as preqcombi
+    GROUP BY "courseID") as prereqs 
+        ON courses."courseID" = prereqs."courseID" 
+    
+    FULL OUTER JOIN (SELECT "courseID", array_agg(semester) as semester FROM "SemesterOffered" GROUP BY "courseID") as sem 
+        ON courses."courseID" = sem."courseID" 
+    
+    FULL OUTER JOIN (SELECT "courseID", array_agg(professor) as professor FROM "Professors" GROUP BY "courseID") as prof 
+        ON courses."courseID" = prof."courseID"
+    
+    WHERE courses.coursenumber = $1`;
 
     try {
         const result = await pool.query(query, [coursenumber]);
-        const course = result.rows.length > 0 ? result.rows[0] : null;
+        const course = result.rows.length > 0 ? result.rows : null;
         return course;
     } catch (error){
         throw error

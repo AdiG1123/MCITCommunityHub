@@ -35,26 +35,14 @@ router.get('/coursestats', async (req, res) => {
   }
 });
 
-router.get('/:courseid', async (req, res) => {
-    const courseid = req.params.courseid;
+router.get('/:coursenum', async (req, res) => {
+    const coursenum = req.params.coursenum;
   
     try {
-      const course = await courses.singleCourse(courseid);
-      console.log(course["courseID"]);
-        
+      const course = await courses.singleCourse(coursenum);
+      console.log(course);
       if (course) {
-        
-        const coursePrereq = await courses.prereqs(course["courseID"]);
-        
-        console.log(typeof coursePrereq);
-        if (coursePrereq){
-            course["prereq"] = coursePrereq
-            res.send(course); // Respond with course data if found
-        
-        }else{
-            res.json(course);
-        }
-
+        res.json(course);
       } else {
         res.status(404).json({ message: 'Course not found' }); // Respond with a 404 status code if course not found
       }
@@ -62,10 +50,5 @@ router.get('/:courseid', async (req, res) => {
       res.status(500).json({ error: error.message }); // Respond with a 500 status code if an error occurs
     }
   })
-
-
-
-
-
 
 module.exports = router;
