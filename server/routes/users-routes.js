@@ -28,10 +28,8 @@ router.get('/getuserid', async (req, res) => {
     const userinfo = await users.getUserID(sub);
 
     if (userinfo) {
-      res.json(userinfo); // Respond with course data if found
-    } else {
-      res.status(404).json({ message: 'User not found' }); // Respond with a 404 status code if user not found
-    }
+      res.json(userinfo); // Respond with course data
+    } 
   } catch (error) {
     res.status(500).json({ error: error.message }); // Respond with a 500 status code if an error occurs
   }
@@ -40,7 +38,7 @@ router.get('/getuserid', async (req, res) => {
 // gets the user info given the userID
 router.get('/:userID', async (req, res) => {
     
-    const sub = req.user.sub;
+    const userID = req.params.userID;
     try {
       const userinfo = await users.singleUserByUserID(userID);
   
