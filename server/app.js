@@ -11,7 +11,7 @@ const verifyToken = require('./middleware/verify-token-middleware');
 
 app.use(cors());
 app.use(express.json());
-app.use(verifyToken);
+//app.use(verifyToken);
 app.use('/', routes);
 
 const PORT = 8888;
