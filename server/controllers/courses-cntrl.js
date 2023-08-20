@@ -117,7 +117,7 @@ exports.singleCourseStats = async function singleCourseStats(courseid){
     try {
         const result = await pool.query(query, [courseid]);
         
-        const allCourses = result.rows.length > 0 ? result.rows : null;
+        const allCourses = result.rows.length > 0 ? result.rows[0] : null;
         
         return allCourses;
       
