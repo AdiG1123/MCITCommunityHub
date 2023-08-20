@@ -14,7 +14,7 @@ router.get('/:userid', async (req, res) => {
       courseBuildInfo["graduationSemester"] = splitGrad[0];
       courseBuildInfo["graduationYear"] = splitGrad[1];
       
-      const splitStart = coursebuilder.utilSplit(courseBuildInfo[0]["startSemester"]);
+      const splitStart = coursebuilder.utilSplit(courseBuildInfo["startSemester"]);
       courseBuildInfo["startSemester"] = splitStart[0];
       courseBuildInfo["startYear"] = splitStart[1];        
       
