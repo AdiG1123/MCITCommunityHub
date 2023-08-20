@@ -35,6 +35,20 @@ router.get('/coursestats', async (req, res) => {
   }
 });
 
+router.get('/coursestats/:courseid', async (req, res) => {
+  const courseID = req.params.courseid;
+  try {
+    const courseInfo = await courses.singleCourseStats(courseID);
+    if (courseInfo) {
+      res.json(courseInfo); // Respond with course data if found
+    } else {
+      res.status(404).json({ message: 'Course stats not found' }); // Respond with a 404 status code if course not found
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message }); // Respond with a 500 status code if an error occurs
+  }
+});
+
 router.get('/:coursenum', async (req, res) => {
     const coursenum = req.params.coursenum;
   
