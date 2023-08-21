@@ -17,11 +17,11 @@ exports.reviewByUser = async function reviewByUser(userid){
     )
     SELECT *
       FROM (
-        SELECT reply."reviewID"::INTEGER AS "reviewid", reply."reviewID" as "reviewID", reply."courseID", reply."parentID"::INTEGER, reply."userID", reply."date", reply."content" 
+        SELECT reply."reviewID"::INTEGER AS "reviewID", reply."reviewID"::INTEGER as "reviewid", reply."courseID", reply."parentID"::INTEGER, reply."userID", reply."date", reply."content" 
         FROM reply
         ) as replyone
         LEFT OUTER JOIN "Reviews"
-        ON "Reviews"."reviewID" = replyone."reviewid";`;
+        ON "Reviews"."reviewID" = replyone."reviewID";`;
   try {
       const result = await pool.query(query, [userid]);
       const userInfo = result.rows.length > 0 ? result.rows : null;
@@ -48,11 +48,11 @@ exports.reviewByCourseID = async function reviewByCourseID(courseID){
       )
       SELECT *
       FROM (
-        SELECT reply."reviewID"::INTEGER AS "reviewid", reply."reviewID" as "reviewID", reply."courseID", reply."parentID"::INTEGER, reply."userID", reply."date", reply."content" 
+        SELECT reply."reviewID"::INTEGER AS "reviewID", reply."reviewID"::INTEGER as "reviewid", reply."courseID", reply."parentID"::INTEGER, reply."userID", reply."date", reply."content" 
         FROM reply
         ) as replyone
         LEFT OUTER JOIN "Reviews"
-        ON "Reviews"."reviewID" = replyone."reviewid";`;
+        ON "Reviews"."reviewID" = replyone."reviewID";`;
     try {
         const result = await pool.query(query, [courseID]);
         const userInfo = result.rows.length > 0 ? result.rows : null;
