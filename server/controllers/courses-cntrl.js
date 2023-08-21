@@ -127,7 +127,7 @@ exports.singleCourseStats = async function singleCourseStats(courseid){
 }
 
 
-exports.singleCourse = async function singleCourse(coursenumber){
+exports.singleCourse = async function singleCourse(courseID){
     const query = `SELECT courses.*, prereqs."prereqnumber", prereqs."coreq", sem.semester, prof.professor 
     FROM "Courses" as courses 
     
@@ -145,10 +145,10 @@ exports.singleCourse = async function singleCourse(coursenumber){
     FULL OUTER JOIN (SELECT "courseID", array_agg(professor) as professor FROM "Professors" GROUP BY "courseID") as prof 
         ON courses."courseID" = prof."courseID"
     
-    WHERE courses.coursenumber = $1`;
+    WHERE courses."courseID" = $1`;
 
     try {
-        const result = await pool.query(query, [coursenumber]);
+        const result = await pool.query(query, [courseID]);
         const course = result.rows.length > 0 ? result.rows : null;
         return course;
     } catch (error){

@@ -49,11 +49,11 @@ router.get('/coursestats/:courseid', async (req, res) => {
   }
 });
 
-router.get('/:coursenum', async (req, res) => {
-    const coursenum = req.params.coursenum;
+router.get('/:courseid', async (req, res) => {
+    const courseid = req.params.courseid;
   
     try {
-      const course = await courses.singleCourse(coursenum);
+      const course = await courses.singleCourse(courseid);
       console.log(course);
       if (course) {
         res.json(course);
