@@ -4,12 +4,12 @@ var router = express.Router();
 
 // create a user
 router.post('/', async (req, res) => {
-  //const sub = req.user.sub;
+  const sub = req.user.sub;
   try {
-    const userInfo = await users.createUser(req.body, 123123123123);
+    const userInfo = await users.createUser(req.body, sub);
     console.log(userInfo);
     if (userInfo) {
-      const lenCourseBuild = users.populateCourseBuilder(userInfo[0]["userID"])
+      const lenCourseBuild = await users.populateCourseBuilder(userInfo["userID"])
       console.log(lenCourseBuild);
       res.json(userInfo); // Respond with new user info
     } else {

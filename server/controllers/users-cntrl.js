@@ -121,7 +121,7 @@ exports.createUser = async function createUser(body, sub){
         body.mcitEmailNotifications, body.mcitConnectEnable, body.mcitConnectEmailNotifications, 
         body.email, body.linkedinURL, body.preferredContactMethod, body.bio, body.marketOutcome, 
         body.workStatus, body.startSemester, sub]);
-    const newUserID = result.rows.length > 0 ? result.rows : null;
+    const newUserID = result.rows.length > 0 ? result.rows[0] : null;
     return newUserID;
 } catch (error){
     throw error
