@@ -22,13 +22,14 @@ router.post('/', async (req, res) => {
 
 // gets the userID for the current user
 router.get('/getuserid', async (req, res) => {
-    
-  //const sub = req.user.sub;
+  const sub = req.user.sub;
   try {
     const userinfo = await users.getUserID(sub);
 
     if (userinfo) {
       res.json(userinfo); // Respond with course data
+    }else{
+      res.json({"userID": null});
     } 
   } catch (error) {
     res.status(500).json({ error: error.message }); // Respond with a 500 status code if an error occurs
@@ -73,6 +74,40 @@ router.get('/:userID', async (req, res) => {
     }
   });
 
+  // updates a user profile
+router.put('/updateuser', async (req, res) => {
+  const body = req.body;
+  
+  try {
+    const userinfo = await users.updateUser(body);
+
+    if (!userinfo) {
+      res.status(401).json({ message: 'User Update Failed' }); // Respond with a 404 status code if user not found
+    }
+
+   const coursestaken = req.body.coursesTaken;
+   const currentcourses = req.body.currentCourses;
+    if (coursestaken){
+      await users.deleteCoursesTaken(body);
+      for (let i=0; i < coursestaken.length; i++){
+        const cTaken = await users.updateCoursesTaken(body, coursestaken[i]);
+      }
+    }
+    if (currentcourses){
+      await users.deleteCurrentCourses(body);
+      for (let i=0; i < currentcourses.length; i++){
+        const courseCurr = await users.updateCurrentCourses(body, currentcourses[i]);
+      }
+    }
+
+    if (userinfo){
+      res.json(userinfo);
+    }
+
+  } catch (error) {
+    res.status(500).json({ error: error.message }); // Respond with a 500 status code if an error occurs
+  }
+});
 
 
 

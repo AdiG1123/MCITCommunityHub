@@ -132,16 +132,82 @@ exports.populateCourseBuilder = async function getUserID(userID){
 }
 }
 
-exports.updateUser = async function updateUser(userID){
+exports.updateUser = async function updateUser(body){
   
-  const query = `UPDATE "User"
-  SET "User".
-  WHERE "User"."userID" = $`
+  const query = `UPDATE "User" 
+  SET "name" = $1, "timeZone" = $2, "expectedGraduation" = $3, 
+  "industry" = $4, "fulltimeStudentStatus" = ($5::BOOLEAN), "inTurtleClub" = ($6::BOOLEAN), 
+  "mcitEmailNotifications" = ($7::BOOLEAN), "mcitConnectEmailNotifications" = ($8::BOOLEAN), 
+  "mcitConnectEnable" = $9::BOOLEAN, "startSemester" = $10
+  WHERE "userID" = $11
+  RETURNING "userID" AS userid`
   
   try {
-    const result = await pool.query(query, [userID]);
-    const newUserID = result.rows.length > 0 ? result.rows : null;
-    return newUserID.length;
+    const result = await pool.query(query, [body.name, body.timeZone, body.expectedGraduation, body.industry, body.fulltimeStudentStatus,
+      body.inTurtleClub, body.mcitEmailNotifications, body.mcitConnectEmailNotifications, body.mcitConnectEnable, body.startSemester, body.userID]);
+    const userID = result.rows.length > 0 ? result.rows[0] : null;
+    return userID;
+} catch (error){
+    throw error
+}
+}
+
+
+exports.deleteCoursesTaken = async function deleteCoursesTaken(body){
+  
+  const query = `DELETE FROM "CoursesTaken"
+  WHERE "userID" = $1
+  RETURNING *`
+  
+  try {
+    const result = await pool.query(query, [body.userID]);
+    const userID = result.rows.length > 0 ? result.rows[0] : null;
+    return userID;
+} catch (error){
+    throw error
+}
+}
+
+exports.updateCoursesTaken = async function updateCoursesTaken(body, courseID){
+  
+  const query = `INSERT INTO "CoursesTaken" ("userID", "courseID")
+  VALUES ($1::INTEGER, $2::INTEGER)
+  RETURNING "userID" AS userid`
+  
+  try {
+    const result = await pool.query(query, [body.userID, courseID]);
+    const userID = result.rows.length > 0 ? result.rows[0] : null;
+    return userID;
+} catch (error){
+    throw error
+}
+}
+
+exports.deleteCurrentCourses = async function deleteCurrentCourses(body){
+  
+  const query = `DELETE FROM "CurrentCourses"
+  WHERE "userID" = $1
+  RETURNING *`
+  
+  try {
+    const result = await pool.query(query, [body.userID]);
+    const userID = result.rows.length > 0 ? result.rows[0] : null;
+    return userID;
+} catch (error){
+    throw error
+}
+}
+
+exports.updateCurrentCourses = async function updateCurrentCourses(body, courseID){
+  
+  const query = `INSERT INTO "CurrentCourses" ("userID", "courseID")
+  VALUES ($1::INTEGER, $2::INTEGER)
+  RETURNING "userID" AS userid`
+  
+  try {
+    const result = await pool.query(query, [body.userID, courseID]);
+    const userID = result.rows.length > 0 ? result.rows[0] : null;
+    return userID;
 } catch (error){
     throw error
 }
