@@ -14,7 +14,7 @@ exports.reviewByUser = async function reviewByUser(userid){
         INNER JOIN reply as rep 
             ON rep."reviewID" = y."parentID"
     )
-    SELECT replyone."reviewid" AS "reviewID", replyone."parentID", replyone."userID", replyone."date", replyone."content", reviews."semester", reviews."professor", reviews."difficulty", reviews."rating", reviews."weeklyHours", reviews."finalGrade", pairings.coursepairing, pairings.pairingrec
+    SELECT CAST(replyone."reviewid" AS INTEGER) AS "reviewID", CAST(replyone."parentID" AS INTEGER), CAST(replyone."userID" AS INTEGER), replyone."date", replyone."content", reviews."semester", reviews."professor", reviews."difficulty", reviews."rating", reviews."weeklyHours", reviews."finalGrade", pairings.coursepairing, pairings.pairingrec
     FROM (
       SELECT reply."reviewID"::INTEGER AS "reviewID", reply."reviewID"::INTEGER as "reviewid", reply."courseID", reply."parentID"::INTEGER, reply."userID", reply."date", reply."content" 
       FROM reply
@@ -54,7 +54,7 @@ exports.reviewByCourseID = async function reviewByCourseID(courseID){
           INNER JOIN reply as rep 
               ON rep."reviewID" = y."parentID"
       )
-      SELECT replyone."reviewid" AS "reviewID", replyone."parentID", replyone."userID", replyone."date", replyone."content", reviews."semester", reviews."professor", reviews."difficulty", reviews."rating", reviews."weeklyHours", reviews."finalGrade", pairings.coursepairing, pairings.pairingrec
+      SELECT CAST(replyone."reviewid" AS INTEGER) AS "reviewID", CAST(replyone."parentID" AS INTEGER), CAST(replyone."userID" AS INTEGER), replyone."date", replyone."content", reviews."semester", reviews."professor", reviews."difficulty", reviews."rating", reviews."weeklyHours", reviews."finalGrade", pairings.coursepairing, pairings.pairingrec
       FROM (
         SELECT reply."reviewID"::INTEGER AS "reviewID", reply."reviewID"::INTEGER as "reviewid", reply."courseID", reply."parentID"::INTEGER, reply."userID", reply."date", reply."content" 
         FROM reply
