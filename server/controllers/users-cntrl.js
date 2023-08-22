@@ -111,7 +111,7 @@ exports.getUserID = async function getUserID(sub){
   try {
     const result = await pool.query(query, 
       [sub]);
-    const newUserID = result.rows.length > 0 ? result.rows : null;
+    const newUserID = result.rows.length > 0 ? result.rows[0] : null;
     return newUserID;
 } catch (error){
     throw error
@@ -120,9 +120,24 @@ exports.getUserID = async function getUserID(sub){
 
 exports.populateCourseBuilder = async function getUserID(userID){
 
-  const query = `INSERT INTO "CourseBuilder"
+  const query = `INSERT INTO "CourseBuilder" ("userID", "courseID", "semesterID")
   SELECT DISTINCT $1::int, "courseID", 0 FROM "Courses"
   RETURNING 0;`
+  try {
+    const result = await pool.query(query, [userID]);
+    const newUserID = result.rows.length > 0 ? result.rows : null;
+    return newUserID.length;
+} catch (error){
+    throw error
+}
+}
+
+exports.updateUser = async function updateUser(userID){
+  
+  const query = `UPDATE "User"
+  SET "User".
+  WHERE "User"."userID" = $`
+  
   try {
     const result = await pool.query(query, [userID]);
     const newUserID = result.rows.length > 0 ? result.rows : null;
