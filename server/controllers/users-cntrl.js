@@ -105,6 +105,36 @@ exports.createUser = async function createUser(body, sub){
 }
 }
 
+exports.insertCoursesTaken = async function insertCoursesTaken(courseID, userID){
+
+  const query = `INSERT INTO "CoursesTaken" ("courseID", "userID")"
+  VALUES ($1::INTEGER, $2::INTEGER)
+  RETURN "id"`
+  try {
+    const result = await pool.query(query, 
+      [courseID, userID]);
+    const newUserID = result.rows.length > 0 ? result.rows[0] : null;
+    return newUserID;
+} catch (error){
+    throw error
+}
+}
+
+exports.insertCurrentCourses = async function insertCurrentCourses(courseID, userID){
+
+  const query = `INSERT INTO "CurrentCourses" ("courseID", "userID")"
+  VALUES ($1::INTEGER, $2::INTEGER)
+  RETURN "id"`
+  try {
+    const result = await pool.query(query, 
+      [courseID, userID]);
+    const newUserID = result.rows.length > 0 ? result.rows[0] : null;
+    return newUserID;
+} catch (error){
+    throw error
+}
+}
+
 // get a userID for a sub
 exports.getUserID = async function getUserID(sub){
 

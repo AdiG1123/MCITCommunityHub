@@ -5,12 +5,22 @@ var router = express.Router();
 // create a user
 router.post('/', async (req, res) => {
   const sub = req.user.sub;
+  const body = req.body;
   try {
-    const userInfo = await users.createUser(req.body, sub);
+    const userInfo = await users.createUser(body, sub);
     console.log(userInfo);
-    if (userInfo) {
+    if (userInfo) {      
       const lenCourseBuild = await users.populateCourseBuilder(userInfo["userID"])
-      console.log(lenCourseBuild);
+      if (body.coursesTaken){
+        for (let i = 0; i < body.coursesTaken.length; i++){
+            const courseTakenID = await users.insertCoursesTaken();
+        }
+      }
+      if (body.coursesTaking){
+        for (let i = 0; i < body.coursesTaking.length; i++){
+          const courseTakingID = await users.insertCurrentCourses();
+        }
+      }
       res.json(userInfo); // Respond with new user info
     } else {
       res.status(406).json({ message: 'User not added succesfully' }); // Respond with a 406 status code if user unable to be added
