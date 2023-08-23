@@ -86,7 +86,7 @@ router.put('/updateuser', async (req, res) => {
     }
 
    const coursestaken = req.body.coursesTaken;
-   const currentcourses = req.body.currentCourses;
+   const currentcourses = req.body.coursesTaking;
     if (coursestaken){
       await users.deleteCoursesTaken(body);
       for (let i=0; i < coursestaken.length; i++){
