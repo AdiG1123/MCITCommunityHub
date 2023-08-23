@@ -94,7 +94,8 @@ exports.allCourseStats = async function allCourseStats(){
 
 exports.singleCourseStats = async function singleCourseStats(courseid){
     
-    const query = `SELECT courses.*, prereqs."prereqid", prereqs."coreq", sem.semester, prof.professor,  stats."averageRating", stats."averageDifficulty", stats."averageWorkload" 
+    const query = `SELECT courses.*, prereqs."prereqid", prereqs."coreq", sem.semester, prof.professor,
+     stats."averageRating", stats."averageDifficulty", stats."averageWorkload", stats."reviewCount"
 	FROM "Courses" as courses
     FULL OUTER JOIN (SELECT "courseID", array_agg("prereqid") as prereqid, array_agg("coReq") as coreq FROM "Prereqs" GROUP BY "courseID") as prereqs 
         ON courses."courseID" = prereqs."courseID" 
@@ -105,7 +106,7 @@ exports.singleCourseStats = async function singleCourseStats(courseid){
     FULL OUTER JOIN (SELECT "courseID", array_agg(professor) as professor FROM "Professors" GROUP BY "courseID") as prof 
         ON courses."courseID" = prof."courseID" 
     
-    FULL OUTER JOIN (SELECT "courseID", ROUND(AVG("rating"), 2) as "averageRating", ROUND(AVG("difficulty"), 2) as "averageDifficulty", ROUND(AVG("weeklyHours"),2) as "averageWorkload" 
+    FULL OUTER JOIN (SELECT "courseID", COUNT(*) AS "reviewCount", ROUND(AVG("rating"), 2) as "averageRating", ROUND(AVG("difficulty"), 2) as "averageDifficulty", ROUND(AVG("weeklyHours"),2) as "averageWorkload" 
         FROM (SELECT DISTINCT rrc."courseID", r."rating", r."difficulty", r."weeklyHours" 
                 FROM "ReviewReplyContent" as rrc
 			  FULL OUTER JOIN (SELECT "reviewID","rating", "difficulty", "weeklyHours" FROM "Reviews") as r
