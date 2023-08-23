@@ -25,10 +25,10 @@ exports.courseBuilder = async function courseBuilder(userID){
 }
 
 exports.courseBuilderUpdate = async function courseBuilderUpdate(courseID, userID, newSemesterID){
-    const query = `UPDATE "CourseBuilder" AS build
-    SET build."semesterID" = $1
-    WHERE build."courseID" = $2 AND build."userID" = $3
-    RETURNING build."semesterID"`;
+    const query = `UPDATE "CourseBuilder"
+    SET "semesterID" = $1
+    WHERE "courseID" = $2 AND "userID" = $3
+    RETURNING "semesterID"`;
 
     try {
         const result = await pool.query(query, [newSemesterID, courseID, userID]);
