@@ -3,7 +3,10 @@ const pool = require("./db");
 // pulls information for a single user
 exports.singleUserByUserID = async function user(userid){
   
-  const query = `SELECT *
+  const query = `SELECT "name", "anonName", "timeZone", "expectedGraduation", 
+  "industry", "fulltimeStudentStatus", "inTurtleClub", "mcitEmailNotifications",
+  "mcitConnectEnable", "mcitConnectEmailNotifications", "email", "linkedinURL", 
+  "preferredContactMethod", "bio", "marketOutcome", "workStatus", "startSemester"
   FROM "User"
   WHERE "User"."userID" = $1`
   
@@ -138,7 +141,7 @@ exports.updateUser = async function updateUser(body){
   SET "name" = $1, "timeZone" = $2, "expectedGraduation" = $3, 
   "industry" = $4, "fulltimeStudentStatus" = ($5::BOOLEAN), "inTurtleClub" = ($6::BOOLEAN), 
   "mcitEmailNotifications" = ($7::BOOLEAN), "mcitConnectEmailNotifications" = ($8::BOOLEAN), 
-  "mcitConnectEnable" = $9::BOOLEAN, "startSemester" = $10
+  "mcitConnectEnable" = $9::BOOLEAN, "startSemester" = $10, "bio" = $11, "anonName"
   WHERE "userID" = $11
   RETURNING "userID" AS userid`
   
