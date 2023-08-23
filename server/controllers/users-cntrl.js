@@ -143,7 +143,7 @@ exports.updateUser = async function updateUser(body){
   "mcitEmailNotifications" = ($7::BOOLEAN), "mcitConnectEmailNotifications" = ($8::BOOLEAN), 
   "mcitConnectEnable" = $9::BOOLEAN, "startSemester" = $10, "bio" = $11
   WHERE "userID" = $12
-  RETURNING "userID" AS userid`
+  RETURNING "userID" AS "userID"`
   
   try {
     const result = await pool.query(query, [body.name, body.timeZone, body.expectedGraduation, body.industry, body.fulltimeStudentStatus,
