@@ -141,13 +141,13 @@ exports.updateUser = async function updateUser(body){
   SET "name" = $1, "timeZone" = $2, "expectedGraduation" = $3, 
   "industry" = $4, "fulltimeStudentStatus" = ($5::BOOLEAN), "inTurtleClub" = ($6::BOOLEAN), 
   "mcitEmailNotifications" = ($7::BOOLEAN), "mcitConnectEmailNotifications" = ($8::BOOLEAN), 
-  "mcitConnectEnable" = $9::BOOLEAN, "startSemester" = $10, "bio" = $11, "anonName"
-  WHERE "userID" = $11
+  "mcitConnectEnable" = $9::BOOLEAN, "startSemester" = $10, "bio" = $11
+  WHERE "userID" = $12
   RETURNING "userID" AS userid`
   
   try {
     const result = await pool.query(query, [body.name, body.timeZone, body.expectedGraduation, body.industry, body.fulltimeStudentStatus,
-      body.inTurtleClub, body.mcitEmailNotifications, body.mcitConnectEmailNotifications, body.mcitConnectEnable, body.startSemester, body.userID]);
+      body.inTurtleClub, body.mcitEmailNotifications, body.mcitConnectEmailNotifications, body.mcitConnectEnable, body.startSemester, body.bio, body.userID]);
     const userID = result.rows.length > 0 ? result.rows[0] : null;
     return userID;
 } catch (error){
