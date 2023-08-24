@@ -145,7 +145,7 @@ exports.addPairing = async function addPairing(newReviewID, courseIDToAdd, pairi
 exports.updateReviewOrComment = async function updateReviewOrComment(body){
   const query = `UPDATE "ReviewReplyContent" 
   SET "content" = $1
-  WHERE "reviewID" = ($2::INTEGER)
+  WHERE "reviewID" = $2::INTEGER
   RETURNING "reviewID"`;
   try {
       const result = await pool.query(query, [body.content, body.reviewID]);
@@ -159,12 +159,12 @@ exports.updateReviewOrComment = async function updateReviewOrComment(body){
 
 exports.updateMainReview = async function updateMainReview(body, reviewID){
   const query = `UPDATE "Reviews" 
-  SET "semester" = $1, "professor" = $2, "difficulty" = $3::INTEGER, 
-  "rating" = $4::INTEGER, "weeklyHours" = $5::INTEGER, "finalGrade" = $6 
-  WHERE "reviewID" = ($7::INTEGER)
+  SET "semester" = $1, "difficulty" = $2::INTEGER, 
+  "rating" = $3::INTEGER, "weeklyHours" = $4::INTEGER, "finalGrade" = $5 
+  WHERE "reviewID" = ($6::INTEGER)
   RETURNING "reviewID"`;
   try {
-      const result = await pool.query(query, [body.semester, body.professor, body.difficulty,
+      const result = await pool.query(query, [body.semester, body.difficulty,
         body.rating, body.weeklyHours, body.finalGrade, reviewID]);
       const userInfo = result.rows.length > 0 ? result.rows[0] : null;
       return userInfo;
@@ -174,15 +174,11 @@ exports.updateMainReview = async function updateMainReview(body, reviewID){
 
 }
 
-exports.updatePairings = async function updatePairings(body, reviewID){
-  const query = `UPDATE "UserCoursePairing" 
-  SET "courseID" = $1, "professor" = $2, "difficulty" = $3::INTEGER, 
-  "rating" = $4::INTEGER, "weeklyHours" = $5::INTEGER, "finalGrade" = $6 
-  WHERE "reviewID" = ($7::INTEGER)
-  RETURNING "reviewID"`;
+exports.deletePairings = async function deletePairings(reviewID){
+  const query = `DELETE FROM "UserCoursePairing"
+  WHERE "reviewID" = $1`;
   try {
-      const result = await pool.query(query, [body.semester, body.professor, body.difficulty,
-        body.rating, body.weeklyHours, body.finalGrade, reviewID]);
+      const result = await pool.query(query, [reviewID]);
       const userInfo = result.rows.length > 0 ? result.rows[0] : null;
       return userInfo;
   } catch (error){

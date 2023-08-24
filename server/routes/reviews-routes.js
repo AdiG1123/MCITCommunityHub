@@ -60,6 +60,34 @@ router.post('/newreview', async (req, res) => {
   }
 });
 
+router.put('/updatereview', async (req, res) => {
+  
+  const body = req.body;
+
+  try {
+    const reviewInfo = await reviews.updateReviewOrComment(body);
+    console.log(reviewInfo)
+    if (reviewInfo) {
+      const reviewID = body.reviewID
+      if (!body.parentID){
+        const mainReview = await reviews.updateMainReview(body, reviewID);
+        console.log(mainReview);
+      }
+      if (body.pairingrec != null && body.coursepairing != null){
+          for (let i = 0; i < body.pairingrec.length; i++){
+            await reviews.deletePairings(reviewID);
+            const addPairing = await reviews.addPairing(reviewID, body.coursepairing[i], body.pairingrec[i]);
+          }
+      }
+      res.json(reviewInfo);
+    } else {
+      res.status(404).json({ message: 'Reviews failed to update' }); // Respond with a 404 status code if course not found
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message }); // Respond with a 500 status code if an error occurs
+  }
+});
+
 router.post('/deletereview', async (req, res) => {
   
   const body = req.body;
