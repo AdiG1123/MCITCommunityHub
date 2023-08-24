@@ -94,10 +94,19 @@ exports.allCourseStats = async function allCourseStats(){
 
 exports.singleCourseStats = async function singleCourseStats(courseid){
     
-    const query = `SELECT courses.*, prereqs."prereqid", prereqs."coreq", sem.semester, prof.professor,
+    const query = `SELECT courses.*, prereqs."prereqid", prereqs."coreq", prereqs."prereqcoursenumber", sem.semester, prof.professor,
      stats."averageRating", stats."averageDifficulty", stats."averageWorkload", stats."reviewCount"
 	FROM "Courses" as courses
-    FULL OUTER JOIN (SELECT "courseID", array_agg("prereqid") as prereqid, array_agg("coReq") as coreq FROM "Prereqs" GROUP BY "courseID") as prereqs 
+    FULL OUTER JOIN (
+        SELECT prereqinter."courseID", array_agg("prereqid") as prereqid, array_agg("coReq") as coreq, array_agg("coursenumber") AS prereqcoursenumber
+        FROM (
+            SELECT "Prereqs"."courseID", "Prereqs"."prereqid", "Prereqs"."coReq", course."coursenumber" AS coursenumber
+            FROM "Prereqs"
+            INNER JOIN (SELECT "Courses"."courseID", "Courses"."coursenumber" FROM "Courses") as course
+            ON course."courseID" = "Prereqs"."prereqid"
+            WHERE "Prereqs"."courseID" = $1
+      ) as prereqinter
+     GROUP BY "courseID") as prereqs 
         ON courses."courseID" = prereqs."courseID" 
     
     FULL OUTER JOIN (SELECT "courseID", array_agg(semester) as semester FROM "SemesterOffered" GROUP BY "courseID") as sem 
