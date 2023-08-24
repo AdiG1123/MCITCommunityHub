@@ -74,8 +74,10 @@ router.put('/updatereview', async (req, res) => {
         console.log(mainReview);
       }
       if (body.pairingrec != null && body.coursepairing != null){
-          for (let i = 0; i < body.pairingrec.length; i++){
-            await reviews.deletePairings(reviewID);
+          
+          await reviews.deletePairings(reviewID);
+          
+          for (let i = 0; i < body.pairingrec.length; i++){ 
             const addPairing = await reviews.addPairing(reviewID, body.coursepairing[i], body.pairingrec[i]);
           }
       }
