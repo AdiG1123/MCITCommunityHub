@@ -15,7 +15,7 @@ exports.reviewByUser = async function reviewByUser(userid){
             ON rep."reviewID" = y."parentID"
     )
     SELECT CAST(replyone."courseID" AS INTEGER) as "courseID", CAST(replyone."reviewid" AS INTEGER) AS "reviewID", CAST(replyone."parentID" AS INTEGER), 
-    CAST(replyone."userID" AS INTEGER), replyone."date", replyone."content", reviews."semester", reviews."professor", reviews."difficulty", 
+    CAST(replyone."userID" AS INTEGER), users."anonName", replyone."date", replyone."content", reviews."semester", reviews."professor", reviews."difficulty", 
     reviews."rating", reviews."weeklyHours", reviews."finalGrade", pairings.coursepairing, pairings.pairingrec, pairings."coursepairingID", courseConnect."coursenumber", courseConnect.coursename
     FROM (
       SELECT reply."reviewID"::INTEGER AS "reviewID", reply."reviewID"::INTEGER as "reviewid", reply."courseID", reply."parentID"::INTEGER, reply."userID", reply."date", reply."content" 
@@ -34,7 +34,11 @@ exports.reviewByUser = async function reviewByUser(userid){
       ON pairings."reviewID" = replyone."reviewID"
       
       INNER JOIN (SELECT courseNum."courseID", courseNum."coursenumber", courseNum."coursename" FROM "Courses" as courseNum) as courseConnect
-      ON courseConnect."courseID" = replyone."courseID"`;
+      ON courseConnect."courseID" = replyone."courseID"
+      
+      INNER JOIN (SELECT "User"."anonName", "User"."userID" 
+      FROM "User" ) as users
+      ON users."userID" = replyone."userID"`;
   try {
       const result = await pool.query(query, [userid]);
       const userInfo = result.rows.length > 0 ? result.rows : null;
@@ -60,7 +64,7 @@ exports.reviewByCourseID = async function reviewByCourseID(courseID){
               ON rep."reviewID" = y."parentID"
       )
       SELECT CAST(replyone."courseID" AS INTEGER) as "courseID", CAST(replyone."reviewid" AS INTEGER) AS "reviewID", CAST(replyone."parentID" AS INTEGER), 
-      CAST(replyone."userID" AS INTEGER), replyone."date", replyone."content", reviews."semester", reviews."professor", reviews."difficulty", 
+      CAST(replyone."userID" AS INTEGER), users."anonName", replyone."date", replyone."content", reviews."semester", reviews."professor", reviews."difficulty", 
       reviews."rating", reviews."weeklyHours", reviews."finalGrade", pairings.coursepairing, pairings.pairingrec, pairings."coursepairingID", courseConnect.coursenumber, courseConnect.coursename
       FROM (
         SELECT reply."reviewID"::INTEGER AS "reviewID", reply."reviewID"::INTEGER as "reviewid", reply."courseID", reply."parentID"::INTEGER, reply."userID", reply."date", reply."content" 
@@ -78,8 +82,15 @@ exports.reviewByCourseID = async function reviewByCourseID(courseID){
         
         ON pairings."reviewID" = replyone."reviewID"
         
-        INNER JOIN (SELECT courseNum."courseID", courseNum."coursenumber", courseNum."coursename" FROM "Courses" as courseNum) as courseConnect
-      ON courseConnect."courseID" = replyone."courseID"`;
+        INNER JOIN (SELECT courseNum."courseID", courseNum."coursenumber", courseNum."coursename" 
+        FROM "Courses" as courseNum) as courseConnect
+      ON courseConnect."courseID" = replyone."courseID"
+      
+        INNER JOIN (SELECT "User"."anonName", "User"."userID" 
+        FROM "User" ) as users
+        ON users."userID" = replyone."userID"
+
+      `;
     try {
         const result = await pool.query(query, [courseID]);
         const userInfo = result.rows.length > 0 ? result.rows : null;
@@ -164,8 +175,8 @@ exports.updateMainReview = async function updateMainReview(body, reviewID){
 }
 
 exports.updatePairings = async function updatePairings(body, reviewID){
-  const query = `UPDATE "Reviews" 
-  SET "semester" = $1, "professor" = $2, "difficulty" = $3::INTEGER, 
+  const query = `UPDATE "UserCoursePairing" 
+  SET "courseID" = $1, "professor" = $2, "difficulty" = $3::INTEGER, 
   "rating" = $4::INTEGER, "weeklyHours" = $5::INTEGER, "finalGrade" = $6 
   WHERE "reviewID" = ($7::INTEGER)
   RETURNING "reviewID"`;
