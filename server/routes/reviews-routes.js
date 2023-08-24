@@ -51,6 +51,7 @@ router.post('/newreview', async (req, res) => {
             const addPairing = await reviews.addPairing(reviewInfo.reviewID, body.coursepairing[i], body.pairingrec[i])
           }
       }
+      res.json(reviewInfo);
     } else {
       res.status(404).json({ message: 'Reviews failed to add' }); // Respond with a 404 status code if course not found
     }
