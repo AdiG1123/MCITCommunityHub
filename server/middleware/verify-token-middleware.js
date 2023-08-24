@@ -4,6 +4,10 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   
+  if (!authHeader){
+    return res.status(401).json({message: "ID Token undefined"})
+  }
+
   //split the bearer token
   const idToken = authHeader.split(' ')[1]; 
   
