@@ -179,3 +179,17 @@ exports.updatePairings = async function updatePairings(body, reviewID){
   }
 
 }
+
+exports.deleteReview = async function updateReview(reviewID){
+  const query = `DELETE FROM "ReviewReplyContent"
+  WHERE "reviewID" = ($1::INTEGER)
+  RETURNING 0`;
+  try {
+      const result = await pool.query(query, [reviewID]);
+      const userInfo = result.rows.length > 0 ? result.rows[0] : null;
+      return userInfo;
+  } catch (error){
+      throw error
+  }
+
+}

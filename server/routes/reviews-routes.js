@@ -60,4 +60,21 @@ router.post('/newreview', async (req, res) => {
   }
 });
 
+router.post('/deletereview', async (req, res) => {
+  
+  const body = req.body;
+  const reviewID = body.reviewID;
+  try {
+    const reviewInfo = await reviews.deleteReview(reviewID);
+    
+    if (reviewInfo) {
+      res.json(reviewInfo);      
+    } else {
+      res.status(404).json({ message: 'Reviews failed to add' }); // Respond with a 404 status code if course not found
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message }); // Respond with a 500 status code if an error occurs
+  }
+});
+
 module.exports = router;
