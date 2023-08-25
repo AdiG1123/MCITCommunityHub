@@ -10,7 +10,9 @@ exports.allCourses = async function allCourses(){
         ON courses."courseID" = sem."courseID" 
     
     FULL OUTER JOIN (SELECT "courseID", array_agg(professor) as professor FROM "Professors" GROUP BY "courseID") as prof 
-        ON courses."courseID" = prof."courseID"`
+        ON courses."courseID" = prof."courseID"
+    
+    ORDER BY courses."courseID" ASC;`
     
     try {
         const result = await pool.query(query);
